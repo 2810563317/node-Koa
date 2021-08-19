@@ -65,7 +65,7 @@ class Favor extends Model {
     const arts = await Favor.findAll({
       where:{
         uid,
-        type:{
+        type:{ // type不等于400
           [Op.not]:400,
         }
       }

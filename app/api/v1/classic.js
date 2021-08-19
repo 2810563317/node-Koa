@@ -97,7 +97,10 @@ router.get('/:type/:id', new Auth().m, async (ctx) => {
   const id = v.get('path.id')
   const type = parseInt(v.get('path.type'))
 
-  const artDetail =await new Art(id,type).getDetail(uid)
+  const artDetail =await new Art(id,type).getDetail(uid);
+  if(!artDetail){
+    throw new global.errs.NotFound()
+  }
   const like = await Favor.userLikeIt(id, type, uid)
   artDetail.setDataValue('like_status', like)
   ctx.body= artDetail

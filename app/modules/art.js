@@ -2,10 +2,12 @@ const { Movie, Music, Sentence } = require("./classic");
 const {flatten} = require('lodash')
 const {Op} = require('sequelize')
 class Art {
+  
   constructor(art_id, type) {
     this.art_id = art_id
     this.type = type
   }
+  // 实例方法
   async getDetail(uid) {
     const art = await Art.getData(this.art_id, this.type, uid)
     if(!art){
@@ -13,7 +15,7 @@ class Art {
     }
     return art
   }
-
+  // 静态方法
   static async getData(art_id, type, useScope = true) {
     let art = null
     const finder = {
@@ -51,6 +53,7 @@ class Art {
 
 
   static async getList(artInfoList) {
+    console.log(artInfoList)
     const artInfoObj = {
       100: [],
       200: [],
@@ -70,6 +73,7 @@ class Art {
       key = parseInt(key)
       arts.push(await Art._getListByType(ids, key))
     }
+    // 二维转一维
     return flatten(arts)
   }
   static async _getListByType(ids, type) {
