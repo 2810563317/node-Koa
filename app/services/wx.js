@@ -1,6 +1,6 @@
 const axios = require('axios')
 const util = require('util') // nodejs提供的帮助工具
-const {User} = require('../modules/user')
+const {User} = require('@modules/user')
 const {generateToken} = require('../../core/util')
 const {Auth} = require("../../middlewares/auth")
 class WXManager{

@@ -1,6 +1,6 @@
 const Router = require('koa-router')
-const {RegisterValidator} = require('../../validators/validator')
-const {User} = require('../../modules/user')
+const {RegisterValidator} = require('@validator')
+const {User} = require('@modules/user')
 
 const router = new Router({
   prefix: '/v1/user' // 路由前缀

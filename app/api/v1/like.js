@@ -1,7 +1,7 @@
 const Router = require('koa-router')
-const {LikeValidator} = require('../../validators/validator')
+const {LikeValidator} = require('@validator')
 const { Auth } = require('../../../middlewares/auth')
-const { Favor } = require('../../modules/favor')
+const { Favor } = require('@modules/favor')
 
 const router = new Router({
   prefix: '/v1/like' // 路由前缀

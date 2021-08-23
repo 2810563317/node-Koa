@@ -22,7 +22,8 @@ class Favor extends Model {
         art_id, type, uid
       }, {transaction: t})
       //2
-      const art = await Art.getData(art_id, type, false)
+      const art = await new Art(art_id, type).getData(false)
+      
       // art.increment('fav_nums', {by: 1})
       await art.increment('fav_nums', {by: 1, transaction: t})
     })
@@ -46,7 +47,7 @@ class Favor extends Model {
         transaction: t
       })
 
-      const art = await Art.getData(art_id, type, false)
+      const art = await new Art(art_id, type).getData(false)
       await art.decrement('fav_nums', {by: 1, transaction: t})
     })
   }
@@ -65,9 +66,9 @@ class Favor extends Model {
     const arts = await Favor.findAll({
       where:{
         uid,
-        type:{ // type不等于400
-          [Op.not]:400,
-        }
+        // type:{ // type不等于400
+        //   [Op.not]:400,
+        // }
       }
     })
     if(!arts){

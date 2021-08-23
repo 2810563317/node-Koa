@@ -2,12 +2,12 @@ const Router = require('koa-router')
 const router = new Router({
   prefix: '/v1/classic'
 })
-const { Flow } = require('../../modules/flow')
-const { Art } = require('../../modules/art')
-const { PositiveIntegerValidator, ClassicValidator } = require('../../validators/validator')
+const { Flow } = require('@modules/flow')
+const { Art } = require('@modules/art')
+const { PositiveIntegerValidator, ClassicValidator } = require('@validator')
 
 const { Auth } = require("../../../middlewares/auth")
-const { Favor } = require('../../modules/favor')
+const { Favor } = require('@modules/favor')
 //  API token限制访问
 //  new Auth().m ：自定义中间件验证token
 router.get('/latest', new Auth().m, async (ctx, next) => {
@@ -24,7 +24,7 @@ router.get('/latest', new Auth().m, async (ctx, next) => {
       ['index', 'DESC']
     ]
   })
-  const art = await Art.getData(flow.art_id, flow.type)
+  const art = await new Art(flow.art_id, flow.type).getData()
 
   // art.dataValues.index = flow.index
   art.setDataValue('index', flow.index)
@@ -44,7 +44,7 @@ router.get('/:index/next', new Auth().m, async (ctx) => {
   if(!flow){
     throw new global.errs.NotFound() 
   }
-  const art = await Art.getData(flow.art_id, flow.type)
+  const art = await new Art(flow.art_id, flow.type).getData()
   const likeNext = await Favor.userLikeIt(flow.art_id, flow.type, ctx.auth.uid)
   art.setDataValue('index', flow.index)
   art.setDataValue('like_status', likeNext)
@@ -64,7 +64,7 @@ router.get('/:index/prev', new Auth().m, async (ctx) => {
   if(!flow){
     throw new global.errs.NotFound() 
   }
-  const art = await Art.getData(flow.art_id, flow.type)
+  const art = await new Art(flow.art_id, flow.type).getData()
   const likePrev = await Favor.userLikeIt(flow.art_id, flow.type, ctx.auth.uid)
   art.setDataValue('index', flow.index)
   art.setDataValue('like_status', likePrev)
@@ -75,14 +75,13 @@ router.get('/:type/:id/favor', new Auth().m, async (ctx) => {
   const v = await new ClassicValidator().validate(ctx)
   const id = v.get('path.id')
   const type = parseInt(v.get('path.type'))
-  const art = await Art.getData(id, type)
-  if(!art){
-    throw new global.errs.NotFound()
-  }
-  const like = await Favor.userLikeIt(id, type, ctx.auth.uid)
+
+  const artDetail =await new Art(id,type).getDetail(ctx.auth.uid);
+
+
   ctx.body = {
-    fav_num:art.fav_nums,
-    likeStatus: like
+    fav_num:artDetail.art.fav_nums,
+    likeStatus: artDetail.like_status
   }
 })
 router.get('/favor', new Auth().m, async (ctx) => {
@@ -98,11 +97,9 @@ router.get('/:type/:id', new Auth().m, async (ctx) => {
   const type = parseInt(v.get('path.type'))
 
   const artDetail =await new Art(id,type).getDetail(uid);
-  if(!artDetail){
-    throw new global.errs.NotFound()
-  }
-  const like = await Favor.userLikeIt(id, type, uid)
-  artDetail.setDataValue('like_status', like)
-  ctx.body= artDetail
+
+  artDetail.art.setDataValue('like_status', artDetail.like_status)
+
+  ctx.body= artDetail.art
 })
 module.exports = router

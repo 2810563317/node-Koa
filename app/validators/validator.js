@@ -1,6 +1,6 @@
 const { max } = require('lodash')
 const { LinValidator, Rule } = require('../../core/lin-validator-v2')
-const {User} = require('../modules/user')
+const {User} = require('@modules/user')
 const {LoginType, ArtType} = require('../lib/enum')
 //校验正整数
 class PositiveIntegerValidator extends LinValidator {

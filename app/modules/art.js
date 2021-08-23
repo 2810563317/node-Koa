@@ -1,4 +1,4 @@
-const { Movie, Music, Sentence } = require("./classic");
+const { Movie, Music, Sentence, Book } = require("./classic");
 const {flatten} = require('lodash')
 const {Op} = require('sequelize')
 class Art {
@@ -9,22 +9,29 @@ class Art {
   }
   // 实例方法
   async getDetail(uid) {
-    const art = await Art.getData(this.art_id, this.type, uid)
+    const art = await new Art(this.art_id, this.type).getData()
     if(!art){
       throw new global.errs.NotFound()
     }
-    return art
+    // 可以避免循环导入报错
+    const {Favor} = require('./favor')
+    const like = await Favor.userLikeIt(this.art_id, this.type, uid)
+
+    return {
+      art,
+      'like_status': like
+    }
   }
   // 静态方法
-  static async getData(art_id, type, useScope = true) {
+  async getData(useScope = true) {
     let art = null
     const finder = {
       where: {
-        id: art_id
+        id: this.art_id
       }
     }
     const scope = useScope ? 'bh' : null
-    switch (type) {
+    switch (this.type) {
       case 100:
         art = await Movie.scope(scope).findOne(finder)
         break
@@ -35,13 +42,10 @@ class Art {
         art = await Sentence.scope(scope).findOne(finder)
         break
       case 400:
-        const {
-          Book
-        } = require('./book')
         art = await Book.scope(scope).findOne(finder)
         if (!art) {
           art = await Book.create({
-            id: art_id
+            id: this.art_id
           })
         }
         break
@@ -53,11 +57,11 @@ class Art {
 
 
   static async getList(artInfoList) {
-    console.log(artInfoList)
     const artInfoObj = {
       100: [],
       200: [],
-      300: []
+      300: [],
+      400: []
     }
     for (let artInfo of artInfoList) {
       artInfoObj[artInfo.type].push(artInfo.art_id)
@@ -97,6 +101,17 @@ class Art {
       case 300:
         arts = await Sentence.scope(scope).findAll(finder)
       case 400:
+        const {HotBook} = require('./hotBook')
+        arts = await HotBook.scope(scope).findAll(finder)
+        const books = await Book.scope(scope).findAll(finder)
+        for(let i in arts){
+          for(let j in books){
+            if(arts[i].id === books[j].id){
+              arts[i].dataValues.fav_nums = books[j].fav_nums
+              break
+            }
+          }
+        }
         break
       default:
         break
