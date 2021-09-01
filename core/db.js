@@ -1,6 +1,6 @@
 // Sequelize 连接数据库 配置一些数据库参数
-const { Sequelize } = require('sequelize')
-
+const { Sequelize,Model } = require('sequelize')
+const {unset, clone, isArray} = require('lodash')
 // dbname, user, passward, {}
 const {
   dbName,
@@ -38,6 +38,20 @@ sequelize.sync({
   force: false //true： 先删除表再重新创建
 })
 
+Model.prototype.toJSON = function(){
+  let data = clone(this.dataValues)
+  // unset(data, 'created_at')
+  // unset(data, 'deleted_at')
+  // unset(data, 'updated_at')
+  if(isArray(this.exclude)){
+    this.exclude.forEach(
+      (value) => {
+        unset(data, value)
+      }
+    )
+  }
+  return data
+}
 module.exports = {
   db: sequelize
 }

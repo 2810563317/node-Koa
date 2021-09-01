@@ -40,6 +40,10 @@ class HotBook extends Model {
     return book
   }
 }
+
+// 最好在API里面写，原型链上风险较大
+HotBook.prototype.exclude = ['created_at', 'deleted_at', 'updated_at']
+
 HotBook.init({
   index: Sequelize.INTEGER, 
   image: Sequelize.STRING, 

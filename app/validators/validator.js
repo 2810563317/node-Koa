@@ -101,11 +101,40 @@ class LikeValidator extends PositiveIntegerValidator {
 }
 class ClassicValidator extends LikeValidator {}
 
+
+class SearchValidator extends LinValidator {
+  constructor(){
+    super()
+    this.q = [
+      new Rule('isLength', '搜索关键字不能为空', { min: 1, max: 16})
+    ]
+    // 需要分页
+    this.start=[
+      new Rule('isInt', 'start不符合规则', {min: 0 , max:60000}),
+      new Rule('isOptional', '',  0)
+    ]
+    this.count=[
+      new Rule('isInt', 'count不符合规则', {min: 1 , max:20}),
+      new Rule('isOptional', '',  20)
+    ]
+  }
+}
+
+class ShortCommentValidator extends PositiveIntegerValidator {
+  constructor(){
+    super()
+    this.content = [
+      new Rule('isLength', '内容长度为1到12之间', { min: 1, max: 12})
+    ]
+  }
+}
 module.exports = {
   PositiveIntegerValidator,
   RegisterValidator,
   TokenValidator,
   NotEmptyValidator,
   LikeValidator,
-  ClassicValidator
+  ClassicValidator,
+  SearchValidator,
+  ShortCommentValidator
 }

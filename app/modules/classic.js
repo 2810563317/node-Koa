@@ -51,6 +51,22 @@ class Book extends Model {
     const detail = await axios.get(url)
     return detail.data
   }
+  static async searchFromYuShu(q, start, count, summary = 1){
+    const url = util.format(global.config.yushu.keywordUrl, encodeURI(q), count, start, summary)
+    const result = await axios.get(url)
+    return result.data
+  }
+  static async getMyFavorBookCount(uid){
+    const {Favor} = require('./favor')
+    // Favor.count只返回数量
+    const count = await Favor.count({
+      where:{
+        type: 400,
+        uid
+      }
+    })
+    return count
+  }
 }
 Book.init({
   id:{
