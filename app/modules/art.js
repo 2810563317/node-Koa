@@ -1,4 +1,4 @@
-const { Movie, Music, Sentence, Book } = require("./classic");
+const { Movie, Music, Sentence } = require("./classic");
 const {flatten} = require('lodash')
 const {Op} = require('sequelize')
 class Art {
@@ -42,6 +42,7 @@ class Art {
         art = await Sentence.scope(scope).findOne(finder)
         break
       case 400:
+        const {Book} = require('./classic')
         art = await Book.scope(scope).findOne(finder)
         if (!art) {
           art = await Book.create({
@@ -51,6 +52,10 @@ class Art {
         break
       default:
         break
+    }
+    if(art && art.image){
+      let imgUrl = art.dataValues.image
+      art.dataValues.image = global.config.host + imgUrl
     }
     return art
   }

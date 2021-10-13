@@ -2,7 +2,11 @@ require('module-alias/register')
 
 const Koa = require('koa')
 
+const path = require('path')
+
 const parser = require('koa-bodyparser')
+
+const static = require('koa-static')
 
 const InitManager = require('./core/init')
 
@@ -14,7 +18,8 @@ const app = new Koa()
 app.use(catchError)
 //中间件获取body参数
 app.use(parser())
-
+// 中间件使用静态资源
+app.use(static(path.join(__dirname, './static')))
 
 //使用nodeMon热更新
 

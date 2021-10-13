@@ -19,11 +19,10 @@ class Favor extends Model {
     return db.transaction(async t => {
       //1
       await Favor.create({
-        art_id, type, uid
+        uid, art_id, type
       }, {transaction: t})
       //2
       const art = await new Art(art_id, type).getData(false)
-      
       // art.increment('fav_nums', {by: 1})
       await art.increment('fav_nums', {by: 1, transaction: t})
     })

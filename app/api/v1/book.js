@@ -17,7 +17,7 @@ router.get('/hotBooks', async (ctx, next) =>{
 
 router.get('/:id/detail', async (ctx, next) =>{
   const v = await new PositiveIntegerValidator().validate(ctx)
-  const book = await new Book(v.get('path.id')).detail()
+  const book = await new Book().detail(v.get('path.id'))
   ctx.body = book
 })
 
@@ -55,7 +55,11 @@ router.get('/:book_id/short_comment', new Auth().m, async (ctx, next) =>{
   const v = await new PositiveIntegerValidator().validate(ctx,{
     id: 'book_id'
   })
-  const comments = await Comment.getShortComment(v.get('path.book_id'), ctx.auth.uid)
-  ctx.body = comments
+  const book_id = v.get('path.book_id')
+  const comments = await Comment.getShortComment(book_id, ctx.auth.uid)
+  ctx.body = {
+    comments,
+    book_id
+  }
 })
 module.exports = router

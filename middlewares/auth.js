@@ -48,7 +48,6 @@ class Auth{
         uid: decode.uid,
         scope: decode.scope
       }
-
       await next()
 
     }

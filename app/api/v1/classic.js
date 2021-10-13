@@ -48,6 +48,8 @@ router.get('/:index/next', new Auth().m, async (ctx) => {
   const likeNext = await Favor.userLikeIt(flow.art_id, flow.type, ctx.auth.uid)
   art.setDataValue('index', flow.index)
   art.setDataValue('like_status', likeNext)
+  // 在接口序列化，排除掉不需要的数据
+  // art.exclude=['index']
   ctx.body = art
 })
 

@@ -2,6 +2,10 @@ const {db} = require('../../core/db')
 const {Sequelize, Model, Op} = require('sequelize')
 
 class Comment extends Model {
+  //添加构造函数，Sequelize不会返回没有设置默认值的字段
+  // constructor(){
+  //   super()
+  // }
   static async addComment(bookId, content){
     const comment = await Comment.findOne({
       where:{
